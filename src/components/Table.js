@@ -62,13 +62,13 @@ export default function Table(game) {
     }
 
     queueRef.current = game.G.queue;
-  }, [game.G.queue]);
+  }, [game.G.queue, game.playerID, lastBuzz, loaded, playSound]);
 
   const attemptBuzz = () => {
     if (!buzzed) {
       playSound();
       game.moves.buzz(game.playerID);
-      setBuzzer(true);
+      // setBuzzer(true);
       setLastBuzz(Date.now());
     }
   };
@@ -164,7 +164,7 @@ export default function Table(game) {
               <div className="button-container">
                 <button
                   className="text-button"
-                  onClick={() => game.moves.toggleLock()}
+                  // onClick={() => game.moves.toggleLock()}
                 >
                   {game.G.locked ? 'Unlock buzzers' : 'Lock buzzers'}
                 </button>
