@@ -20,6 +20,8 @@ export default function Game({ auth, setAuth }) {
             playerID: null,
             credentials: null,
             roomID: null,
+            matchPlayer: null,
+            score: null,
           })
         }
       />
@@ -45,6 +47,8 @@ export default function Game({ auth, setAuth }) {
         <App
           gameID={roomID}
           playerID={String(auth.playerID)}
+          matchPlayer={auth.matchPlayer}
+          score={auth.score}
           credentials={auth.credentials}
           headerData={{ ...auth, setAuth }}
         />

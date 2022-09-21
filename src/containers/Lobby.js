@@ -30,6 +30,9 @@ export default function Lobby({ setAuth }) {
 
   const history = useHistory();
   const [name, setName] = useState('');
+  const [score, setScore] = useState(1);
+  const [subjectRole, setSubjectRole] = useState('');
+  const [subjectName, setSubjectName] = useState('');
   const [room, setRoom] = useState(prefilledRoomID || '');
   const [joinMode, setJoinMode] = useState(true);
   const [error, setError] = useState('');
@@ -44,6 +47,7 @@ export default function Lobby({ setAuth }) {
     try {
       // get room
       const roomRes = await getRoom(roomId);
+      console.log('Rooms', roomRes);
       if (roomRes.status !== 200) {
         throw new Error(ERROR_TYPE.roomCode);
       }
@@ -61,6 +65,7 @@ export default function Lobby({ setAuth }) {
       }
       const playerID = get(playerSeat, 'id', get(freeSeat, 'id'));
       const joinRes = await joinRoom(room.roomID, playerID, name);
+      console.log('Joining:', joinRes);
       if (joinRes.status !== 200) {
         throw new Error(ERROR_TYPE.roomCode);
       }
@@ -69,6 +74,8 @@ export default function Lobby({ setAuth }) {
         playerID,
         credentials: creds.playerCredentials,
         roomID: room.roomID,
+        matchPlayer: { name: subjectName, role: subjectRole },
+        score,
       };
 
       // save auth and go to room
@@ -173,9 +180,44 @@ export default function Lobby({ setAuth }) {
         <Form.Label>Your name</Form.Label>
         <Form.Control
           value={name}
+          required={true}
           onChange={(e) => {
             setError('');
             setName(e.target.value);
+          }}
+        />
+      </Form.Group>
+      <Form.Group controlId="score">
+        <Form.Label>Initial score</Form.Label>
+        <Form.Control
+          value={score}
+          type="number"
+          min={1}
+          onChange={(e) => {
+            setError('');
+            setScore(e.target.value);
+          }}
+        />
+      </Form.Group>
+      <Form.Group controlId="subject_name">
+        <Form.Label>Player Name</Form.Label>
+        <Form.Control
+          value={subjectName}
+          required={true}
+          onChange={(e) => {
+            setError('');
+            setSubjectName(e.target.value);
+          }}
+        />
+      </Form.Group>
+      <Form.Group controlId="subject_role">
+        <Form.Label>Player Role</Form.Label>
+        <Form.Control
+          value={subjectRole}
+          required={true}
+          onChange={(e) => {
+            setError('');
+            setSubjectRole(e.target.value);
           }}
         />
       </Form.Group>

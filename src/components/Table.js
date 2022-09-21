@@ -6,7 +6,12 @@ import { Container } from 'react-bootstrap';
 import Header from '../components/Header';
 
 export default function Table(game) {
+  console.log('TABLE: ', game);
   const [loaded, setLoaded] = useState(false);
+  const [gameScore, setGameScore] = useState(game.score);
+  let globalScore = game.score;
+  // setGameScore(game.score);
+
   const [buzzed, setBuzzer] = useState(
     some(game.G.queue, (o) => o.id === game.playerID)
   );
@@ -25,12 +30,12 @@ export default function Table(game) {
     rate: 1.5,
   });
 
-  const playSound = () => {
+  function playSound() {
     if (sound && !soundPlayed) {
       buzzSound.play();
       setSoundPlayed(true);
     }
-  };
+  }
 
   useEffect(() => {
     console.log(game.G.queue, Date.now());
@@ -65,12 +70,15 @@ export default function Table(game) {
   }, [game.G.queue, game.playerID, lastBuzz, loaded, playSound]);
 
   const attemptBuzz = () => {
-    if (!buzzed) {
-      playSound();
-      game.moves.buzz(game.playerID);
-      // setBuzzer(true);
-      setLastBuzz(Date.now());
-    }
+    // if (!buzzed) {
+    playSound();
+    game.moves.buzz(game.playerID);
+    // setBuzzer(true);
+    setLastBuzz(Date.now());
+    const tot = parseInt(gameScore) + 1;
+    setGameScore(tot);
+    globalScore = tot;
+    // }
   };
 
   // spacebar will buzz
@@ -84,7 +92,7 @@ export default function Table(game) {
     window.addEventListener('keydown', onKeydown);
     return () => window.removeEventListener('keydown', onKeydown);
   }, []);
-
+  // console.log('Effect: ', game);
   const players = !game.gameMetadata
     ? []
     : game.gameMetadata
@@ -114,10 +122,14 @@ export default function Table(game) {
     .filter((p) => p.name);
   // active players who haven't buzzed
   const activePlayers = orderBy(
-    players.filter((p) => !some(queue, (q) => q.id === p.id)),
+    players
+      .filter((p) => p.id !== game.playerID)
+      .filter((p) => !some(queue, (q) => q.id === p.id)),
     ['connected', 'name'],
     ['desc', 'asc']
   );
+
+  const currentPlayer = players.filter((p) => p.id === game.playerID)[0];
 
   const timeDisplay = (delta) => {
     if (delta > 1000) {
@@ -135,23 +147,32 @@ export default function Table(game) {
             playerID: null,
             credentials: null,
             roomID: null,
+            matchPlayer: null,
+            score: null,
           })
         }
         sound={sound}
         setSound={() => setSound(!sound)}
       />
       <Container>
+        <p>Giocatore:</p> <strong>{game.matchPlayer.name.toUpperCase()}</strong>{' '}
+        - <strong>{game.matchPlayer.role.toUpperCase()}</strong>
+      </Container>
+      <Container>
         <section>
           <p id="room-title">Room {game.gameID}</p>
+          <h4>
+            Score: <strong>{gameScore}</strong>
+          </h4>
           {!game.isConnected ? (
             <p className="warning">Disconnected - attempting to reconnect...</p>
           ) : null}
           <div id="buzzer">
             <button
               ref={buzzButton}
-              disabled={buzzed || game.G.locked}
+              disabled={game.G.locked}
               onClick={() => {
-                if (!buzzed && !game.G.locked) {
+                if (!game.G.locked) {
                   attemptBuzz();
                 }
               }}
@@ -164,7 +185,7 @@ export default function Table(game) {
               <div className="button-container">
                 <button
                   className="text-button"
-                  // onClick={() => game.moves.toggleLock()}
+                  onClick={() => game.moves.toggleLock()}
                 >
                   {game.G.locked ? 'Unlock buzzers' : 'Lock buzzers'}
                 </button>
@@ -181,6 +202,14 @@ export default function Table(game) {
             </div>
           ) : null}
         </section>
+        <div className="queue">
+          <p>You</p>
+          <ul>
+            <li key={currentPlayer.id}>
+              <strong>{currentPlayer.name}</strong>
+            </li>
+          </ul>
+        </div>
         <div className="queue">
           <p>Players Buzzed</p>
           <ul>

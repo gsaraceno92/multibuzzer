@@ -34,9 +34,13 @@ export async function getRoom(roomId) {
 
 export async function createRoom() {
   try {
-    const response = axios.post(`${LOBBY_SERVER}/games/${Buzzer.name}/create`, {
-      numPlayers: 200,
-    });
+    const response = await axios.post(
+      `${LOBBY_SERVER}/games/${Buzzer.name}/create`,
+      {
+        numPlayers: 200,
+      }
+    );
+    console.log('Res = ', response);
     return response;
   } catch (error) {
     if (error.response) {
@@ -47,7 +51,7 @@ export async function createRoom() {
   }
 }
 
-export async function joinRoom(roomID, playerID, playerName) {
+export async function joinRoom(roomID, playerID, playerName, score, player) {
   try {
     const response = axios.post(
       `${LOBBY_SERVER}/games/${Buzzer.name}/${roomID}/join`,

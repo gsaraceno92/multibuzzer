@@ -14,6 +14,8 @@ import './App.css';
 function App() {
   const [auth, setAuth] = useState({
     playerID: null,
+    matchPlayer: null,
+    score: null,
     credentials: null,
     roomID: null,
   });
