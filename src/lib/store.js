@@ -14,8 +14,8 @@ function toggleLock(G) {
   G.locked = !G.locked;
 }
 
-function increase(G) {
-  G.score = G.score + 1;
+function setupScore(G, ctx, score) {
+  G.custom.score = score;
 }
 
 function buzz(G, ctx, id) {
@@ -31,15 +31,16 @@ function buzz(G, ctx, id) {
   G.queue = newQueue;
 }
 
+const setup = { score: 1 };
 export const Buzzer = {
   name: 'buzzer',
   minPlayers: 2,
   maxPlayers: 200,
-  setup: () => ({ queue: {}, locked: false, score: 1 }),
+  setup: (ctx) => ({ queue: {}, locked: false, custom: { ...setup } }),
   phases: {
     play: {
       start: true,
-      moves: { buzz, resetBuzzer, resetBuzzers, toggleLock, increase },
+      moves: { buzz, resetBuzzer, resetBuzzers, toggleLock, setupScore },
       turn: {
         activePlayers: ActivePlayers.ALL,
       },

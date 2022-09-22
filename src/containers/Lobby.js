@@ -52,7 +52,9 @@ export default function Lobby({ setAuth }) {
         throw new Error(ERROR_TYPE.roomCode);
       }
       const room = roomRes.data;
-
+      setScore(room.setupData.score);
+      setSubjectRole(room.setupData.matchPlayerRole);
+      setSubjectName(room.setupData.matchPlayerName);
       // determine seat to take
       const playerSeat = room.players.find((player) => player.name === name);
       const freeSeat = room.players.find((player) => !player.name);
@@ -74,8 +76,11 @@ export default function Lobby({ setAuth }) {
         playerID,
         credentials: creds.playerCredentials,
         roomID: room.roomID,
-        matchPlayer: { name: subjectName, role: subjectRole },
-        score,
+        matchPlayer: {
+          name: room.setupData.matchPlayerName,
+          role: room.setupData.matchPlayerRole,
+        },
+        score: room.setupData.score,
       };
 
       // save auth and go to room
@@ -92,7 +97,7 @@ export default function Lobby({ setAuth }) {
   async function makeRoom() {
     setLoading(true);
     try {
-      const createRes = await createRoom();
+      const createRes = await createRoom(score, subjectName, subjectRole);
       if (createRes.status !== 200) {
         throw new Error(ERROR_TYPE.hostRoom);
       }

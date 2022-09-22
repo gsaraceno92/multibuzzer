@@ -6,11 +6,10 @@ import { Container } from 'react-bootstrap';
 import Header from '../components/Header';
 
 export default function Table(game) {
-  console.log('TABLE: ', game);
+  console.log('GAME!', game.G);
   const [loaded, setLoaded] = useState(false);
   const [gameScore, setGameScore] = useState(game.score);
-  let globalScore = game.score;
-  // setGameScore(game.score);
+  console.log('G Poiint!', game.G.score);
 
   const [buzzed, setBuzzer] = useState(
     some(game.G.queue, (o) => o.id === game.playerID)
@@ -77,7 +76,7 @@ export default function Table(game) {
     setLastBuzz(Date.now());
     const tot = parseInt(gameScore) + 1;
     setGameScore(tot);
-    globalScore = tot;
+    // game.moves.setupScore(tot);
     // }
   };
 

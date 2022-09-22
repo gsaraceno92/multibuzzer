@@ -32,6 +32,7 @@ export default function Game({ auth, setAuth }) {
       </Container>
     </div>
   );
+  console.log('BUZZ!', Buzzer);
 
   const App = Client({
     game: Buzzer,

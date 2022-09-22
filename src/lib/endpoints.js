@@ -32,12 +32,13 @@ export async function getRoom(roomId) {
   }
 }
 
-export async function createRoom() {
+export async function createRoom(score, matchPlayerName, matchPlayerRole) {
   try {
     const response = await axios.post(
       `${LOBBY_SERVER}/games/${Buzzer.name}/create`,
       {
         numPlayers: 200,
+        setupData: { score, matchPlayerName, matchPlayerRole },
       }
     );
     console.log('Res = ', response);
